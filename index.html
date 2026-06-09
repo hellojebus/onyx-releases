@@ -1,0 +1,1266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Onyx — Markdown todos that don't fight you</title>
+    <meta
+      name="description"
+      content="Onyx is a local-first markdown todo and project app for macOS. Plain .md files are the source of truth; a SQLite sidecar makes them fast. Free download."
+    />
+
+    <!-- Open Graph / social -->
+    <meta property="og:title" content="Onyx" />
+    <meta
+      property="og:description"
+      content="Markdown todos and projects that don't fight you. Local-first, macOS-native."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#f6f1e8" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Inline SVG favicon: the Onyx mark -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='26' fill='%232c2620'/%3E%3Crect x='32' y='32' width='36' height='36' rx='12' fill='%23dcdcdc'/%3E%3C/svg%3E"
+    />
+
+    <style>
+      /* =========================================================
+         Tokens — ported from the Onyx app (src/styles.css)
+         ========================================================= */
+      :root {
+        --paper: #f6f1e8;
+        --paper-rec: #efe9dd;
+        --surface: #fdfbf6;
+        --surface-2: #f9f5ec;
+
+        --fg: #2c2620;
+        --fg-muted: #6a6155;
+        --fg-dim: #9a907f;
+        --fg-faint: #c0b6a3;
+
+        --border: #e7dfce;
+        --border-soft: #efe8d9;
+
+        --accent: #6c5ce7;
+        --accent-dim: #5a46d6;
+        --accent-soft: rgba(108, 92, 231, 0.12);
+        --accent-soft2: rgba(108, 92, 231, 0.07);
+
+        --ok: #3f9d76;
+        --warn: #cf8a3a;
+        --crit: #c8625f;
+
+        --radius: 9px;
+        --radius-sm: 6px;
+        --radius-lg: 14px;
+
+        --serif: "Newsreader", Georgia, "Times New Roman", serif;
+        --sans: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          system-ui, sans-serif;
+        --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+        --shadow-card: 0 1px 2px rgba(60, 48, 28, 0.04),
+          0 8px 30px rgba(60, 48, 28, 0.07);
+        --shadow-pop: 0 1px 2px rgba(60, 48, 28, 0.06),
+          0 16px 44px rgba(60, 48, 28, 0.14);
+
+        --maxw: 1080px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--sans);
+        color: var(--fg);
+        background: var(--paper);
+        font-size: 16px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        overflow-x: hidden;
+      }
+
+      /* Soft warm grain + a couple of barely-there violet auras */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        background:
+          radial-gradient(
+            60rem 60rem at 78% -10%,
+            var(--accent-soft2),
+            transparent 60%
+          ),
+          radial-gradient(
+            50rem 50rem at -10% 25%,
+            rgba(207, 138, 58, 0.06),
+            transparent 55%
+          );
+        pointer-events: none;
+      }
+
+      a {
+        color: var(--accent-dim);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .wrap {
+        width: 100%;
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0 28px;
+      }
+
+      /* =========================================================
+         Nav
+         ========================================================= */
+      header.nav {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: saturate(1.2) blur(10px);
+        background: rgba(246, 241, 232, 0.72);
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.2s ease, background 0.2s ease;
+      }
+      header.nav.is-scrolled {
+        border-bottom-color: var(--border);
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        font-weight: 600;
+        font-size: 17px;
+        letter-spacing: -0.01em;
+        color: var(--fg);
+      }
+      .brand:hover {
+        text-decoration: none;
+      }
+      .mark {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: var(--fg);
+        display: grid;
+        place-items: center;
+        flex: none;
+        box-shadow: var(--shadow-card);
+      }
+      .mark i {
+        width: 11px;
+        height: 11px;
+        border-radius: 4px;
+        background: #dcdcdc;
+        display: block;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        font-size: 14.5px;
+        color: var(--fg-muted);
+      }
+      .nav-links a {
+        color: var(--fg-muted);
+      }
+      .nav-links a:hover {
+        color: var(--fg);
+        text-decoration: none;
+      }
+      .nav-cta {
+        font-family: var(--sans);
+        font-weight: 600;
+        font-size: 14px;
+        padding: 8px 15px;
+        border-radius: var(--radius);
+        background: var(--fg);
+        color: var(--surface);
+        transition: transform 0.08s ease, background 0.15s ease;
+      }
+      .nav-cta:hover {
+        background: #1d1813;
+        text-decoration: none;
+        transform: translateY(-1px);
+      }
+      @media (max-width: 680px) {
+        .nav-links .hide-sm {
+          display: none;
+        }
+      }
+
+      /* =========================================================
+         Hero
+         ========================================================= */
+      .hero {
+        padding: 92px 0 40px;
+        text-align: center;
+      }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--accent-dim);
+        background: var(--accent-soft);
+        border: 1px solid var(--accent-soft);
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-family: var(--mono);
+        letter-spacing: 0.01em;
+      }
+      .eyebrow .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--ok);
+        box-shadow: 0 0 0 0 rgba(63, 157, 118, 0.5);
+        animation: pulse 2.4s ease-out infinite;
+      }
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(63, 157, 118, 0.45);
+        }
+        70% {
+          box-shadow: 0 0 0 7px rgba(63, 157, 118, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(63, 157, 118, 0);
+        }
+      }
+      h1.hero-title {
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: clamp(38px, 6.4vw, 70px);
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+        margin: 22px auto 0;
+        max-width: 14ch;
+        color: var(--fg);
+      }
+      h1 .ital {
+        font-style: italic;
+        color: var(--accent-dim);
+      }
+      .hero-sub {
+        font-family: var(--serif);
+        font-size: clamp(18px, 2.4vw, 22px);
+        line-height: 1.6;
+        color: var(--fg-muted);
+        max-width: 46ch;
+        margin: 22px auto 0;
+      }
+
+      /* Download cluster */
+      .dl {
+        margin: 34px auto 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .btn-dl {
+        display: inline-flex;
+        align-items: center;
+        gap: 13px;
+        font-family: var(--sans);
+        font-weight: 600;
+        font-size: 16px;
+        color: var(--surface);
+        background: var(--accent);
+        padding: 15px 26px;
+        border-radius: var(--radius-lg);
+        box-shadow: 0 1px 2px rgba(60, 48, 28, 0.08),
+          0 14px 34px rgba(108, 92, 231, 0.32);
+        transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1),
+          box-shadow 0.2s ease, background 0.2s ease;
+      }
+      .btn-dl:hover {
+        text-decoration: none;
+        transform: translateY(-2px);
+        background: var(--accent-dim);
+        box-shadow: 0 1px 2px rgba(60, 48, 28, 0.1),
+          0 20px 46px rgba(108, 92, 231, 0.42);
+      }
+      .btn-dl:active {
+        transform: translateY(0);
+      }
+      .btn-dl.is-loading {
+        opacity: 0.7;
+        pointer-events: none;
+      }
+      .btn-dl svg {
+        flex: none;
+      }
+      .btn-dl .apple {
+        width: 19px;
+        height: 19px;
+      }
+      .dl-meta {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--fg-dim);
+        min-height: 18px;
+      }
+      .dl-meta a {
+        color: var(--fg-muted);
+      }
+      .dl-meta .sep {
+        margin: 0 8px;
+        opacity: 0.5;
+      }
+
+      /* =========================================================
+         App window mock
+         ========================================================= */
+      .stage {
+        margin: 56px auto 0;
+        max-width: 980px;
+        perspective: 1600px;
+      }
+      .window {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-pop);
+        overflow: hidden;
+        transform: rotateX(7deg);
+        transform-origin: center top;
+      }
+      .titlebar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 38px;
+        padding: 0 14px;
+        background: var(--surface-2);
+        border-bottom: 1px solid var(--border-soft);
+      }
+      .traffic {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: var(--fg-faint);
+      }
+      .traffic.r {
+        background: #e0786f;
+      }
+      .traffic.y {
+        background: #e2b25b;
+      }
+      .traffic.g {
+        background: #6fc08a;
+      }
+      .titlebar .ttl {
+        margin-left: 10px;
+        font-size: 12.5px;
+        color: var(--fg-dim);
+        font-family: var(--mono);
+      }
+      .panes {
+        display: grid;
+        grid-template-columns: 196px 1fr 232px;
+        min-height: 380px;
+      }
+      .pane {
+        padding: 16px 14px;
+      }
+      .pane.tree {
+        background: var(--surface-2);
+        border-right: 1px solid var(--border-soft);
+      }
+      .pane.rail {
+        background: var(--surface-2);
+        border-left: 1px solid var(--border-soft);
+      }
+      .pane-label {
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+        margin: 2px 0 12px;
+        font-family: var(--sans);
+      }
+      .tree-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 8px;
+        border-radius: var(--radius-sm);
+        font-size: 13.5px;
+        color: var(--fg-muted);
+      }
+      .tree-row.is-selected {
+        background: var(--accent-soft);
+        color: var(--fg);
+      }
+      .tree-row .ic {
+        opacity: 0.6;
+      }
+      .tree-row.indent {
+        margin-left: 14px;
+      }
+
+      /* Editor pane */
+      .doc {
+        font-family: var(--serif);
+      }
+      .doc h2 {
+        font-family: var(--serif);
+        font-weight: 600;
+        font-size: 21px;
+        margin: 0 0 4px;
+        letter-spacing: -0.01em;
+      }
+      .doc .meta {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--fg-dim);
+        margin-bottom: 16px;
+      }
+      .task {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 6px 0;
+        font-size: 15px;
+        color: var(--fg);
+        line-height: 1.5;
+      }
+      .check {
+        flex: none;
+        width: 17px;
+        height: 17px;
+        margin-top: 3px;
+        border-radius: 5px;
+        border: 1.5px solid var(--fg-faint);
+        background: var(--surface);
+        position: relative;
+        transition: background 0.14s ease, border-color 0.14s ease;
+      }
+      .task.done .check {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      .task.done .check::after {
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: 1.5px;
+        width: 4px;
+        height: 8px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(43deg);
+      }
+      .task.done .label {
+        color: var(--fg-dim);
+        text-decoration: line-through;
+        text-decoration-color: var(--fg-faint);
+      }
+      .pill {
+        font-family: var(--mono);
+        font-size: 11px;
+        padding: 1px 7px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent-dim);
+        white-space: nowrap;
+      }
+      .pill.due {
+        background: rgba(207, 138, 58, 0.14);
+        color: var(--warn);
+      }
+      .pill.crit {
+        background: rgba(200, 98, 95, 0.14);
+        color: var(--crit);
+      }
+      .wikilink {
+        color: var(--accent-dim);
+        border-bottom: 1px dashed var(--accent-soft);
+      }
+
+      /* Right rail today list */
+      .rail .group {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+        margin: 0 0 8px;
+      }
+      .rail .r-task {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-size: 13px;
+        color: var(--fg-muted);
+        padding: 4px 0;
+      }
+      .rail .r-task .dotk {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex: none;
+      }
+      .rail .r-task .dotk.w {
+        background: var(--warn);
+      }
+      .rail .r-task .dotk.c {
+        background: var(--crit);
+      }
+      .rail hr {
+        border: 0;
+        border-top: 1px solid var(--border-soft);
+        margin: 16px 0;
+      }
+
+      @media (max-width: 760px) {
+        .window {
+          transform: none;
+        }
+        .panes {
+          grid-template-columns: 1fr;
+        }
+        .pane.tree,
+        .pane.rail {
+          display: none;
+        }
+      }
+
+      /* =========================================================
+         Features
+         ========================================================= */
+      section {
+        padding: 84px 0;
+      }
+      .section-head {
+        max-width: 40ch;
+        margin: 0 auto 48px;
+        text-align: center;
+      }
+      .section-head h2 {
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: clamp(28px, 4vw, 40px);
+        letter-spacing: -0.02em;
+        line-height: 1.12;
+        margin: 0;
+      }
+      .section-head p {
+        color: var(--fg-muted);
+        font-family: var(--serif);
+        font-size: 18px;
+        margin: 14px auto 0;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+      @media (max-width: 880px) {
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 560px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 24px 22px;
+        transition: transform 0.18s ease, box-shadow 0.18s ease,
+          border-color 0.18s ease;
+      }
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-card);
+        border-color: var(--border-soft);
+      }
+      .card .ico {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: var(--accent-soft);
+        color: var(--accent-dim);
+        display: grid;
+        place-items: center;
+        margin-bottom: 16px;
+      }
+      .card h3 {
+        font-family: var(--serif);
+        font-weight: 600;
+        font-size: 19px;
+        margin: 0 0 7px;
+        letter-spacing: -0.01em;
+      }
+      .card p {
+        margin: 0;
+        color: var(--fg-muted);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+      .card code {
+        font-family: var(--mono);
+        font-size: 0.86em;
+        background: var(--surface-2);
+        border: 1px solid var(--border-soft);
+        padding: 1px 5px;
+        border-radius: 5px;
+        color: var(--fg);
+      }
+
+      /* Stats strip */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        text-align: center;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 34px 22px;
+      }
+      @media (max-width: 620px) {
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 28px 18px;
+        }
+      }
+      .stat .num {
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: clamp(28px, 4vw, 38px);
+        color: var(--fg);
+        letter-spacing: -0.02em;
+      }
+      .stat .num .u {
+        font-size: 0.5em;
+        color: var(--fg-dim);
+        margin-left: 2px;
+      }
+      .stat .lbl {
+        font-size: 13px;
+        color: var(--fg-muted);
+        margin-top: 4px;
+      }
+
+      /* =========================================================
+         Final CTA
+         ========================================================= */
+      .cta-final {
+        text-align: center;
+      }
+      .cta-card {
+        background: linear-gradient(180deg, var(--surface), var(--surface-2));
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 56px 28px;
+        box-shadow: var(--shadow-card);
+        position: relative;
+        overflow: hidden;
+      }
+      .cta-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          40rem 22rem at 50% 120%,
+          var(--accent-soft2),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .cta-card h2 {
+        position: relative;
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: clamp(28px, 4.4vw, 44px);
+        letter-spacing: -0.02em;
+        margin: 0 auto;
+        max-width: 18ch;
+      }
+      .cta-card p {
+        position: relative;
+        color: var(--fg-muted);
+        font-family: var(--serif);
+        font-size: 18px;
+        margin: 14px auto 28px;
+        max-width: 44ch;
+      }
+      .req {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--fg-dim);
+        margin-top: 16px;
+      }
+
+      /* =========================================================
+         Footer
+         ========================================================= */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 40px 0;
+        margin-top: 20px;
+      }
+      .foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        color: var(--fg-dim);
+        font-size: 14px;
+      }
+      .foot .brand {
+        font-size: 15px;
+      }
+      .foot-links {
+        display: flex;
+        gap: 22px;
+      }
+      .foot-links a {
+        color: var(--fg-muted);
+      }
+
+      /* =========================================================
+         Reveal-on-scroll animation
+         ========================================================= */
+      .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+          transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+        transition-delay: var(--d, 0ms);
+        will-change: opacity, transform;
+      }
+      .reveal.is-in {
+        opacity: 1;
+        transform: none;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .reveal {
+          opacity: 1 !important;
+          transform: none !important;
+          transition: none !important;
+        }
+        .window {
+          transform: none !important;
+        }
+        .eyebrow .dot {
+          animation: none !important;
+        }
+        .btn-dl,
+        .card,
+        .nav-cta {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===================== NAV ===================== -->
+    <header class="nav" id="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="#top" aria-label="Onyx home">
+          <span class="mark"><i></i></span>
+          Onyx
+        </a>
+        <nav class="nav-links">
+          <a class="hide-sm" href="#features">Features</a>
+          <a class="hide-sm" href="#how">How it works</a>
+          <a
+            href="https://github.com/hellojebus/onyx-releases/releases"
+            target="_blank"
+            rel="noopener"
+            >Releases</a
+          >
+          <a class="nav-cta" id="nav-dl" href="#download">Download</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- ===================== HERO ===================== -->
+      <section class="hero" id="download">
+        <div class="wrap">
+          <span class="eyebrow reveal"
+            ><span class="dot"></span> Local-first · macOS</span
+          >
+
+          <h1 class="hero-title reveal" style="--d: 60ms">
+            Markdown todos that
+            <span class="ital">don't fight you</span>.
+          </h1>
+
+          <p class="hero-sub reveal" style="--d: 120ms">
+            Plain <code style="font-family: var(--mono); font-size: 0.9em"
+              >.md</code
+            >
+            files are the source of truth. A SQLite sidecar makes every task,
+            due date, and link instantly queryable — without ever locking your
+            notes inside an app.
+          </p>
+
+          <div class="dl reveal" style="--d: 180ms">
+            <a
+              class="btn-dl is-loading"
+              id="btn-download"
+              href="https://github.com/hellojebus/onyx-releases/releases/latest"
+            >
+              <svg
+                class="apple"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M16.36 12.78c.02 2.6 2.28 3.46 2.3 3.47-.02.06-.36 1.24-1.19 2.46-.72 1.05-1.46 2.1-2.64 2.12-1.15.02-1.53-.68-2.85-.68-1.32 0-1.74.66-2.83.7-1.13.04-2-1.13-2.72-2.18-1.48-2.15-2.62-6.07-1.1-8.72.76-1.32 2.12-2.15 3.59-2.18 1.12-.02 2.17.75 2.85.75.68 0 1.96-.93 3.3-.79.56.02 2.13.23 3.14 1.7-.08.05-1.87 1.1-1.85 3.28M14.2 5.34c.6-.73 1.01-1.74.9-2.75-.87.03-1.92.58-2.55 1.3-.56.64-1.05 1.67-.92 2.65.97.08 1.96-.49 2.57-1.2"
+                />
+              </svg>
+              <span id="btn-label">Download for macOS</span>
+            </a>
+            <div class="dl-meta" id="dl-meta">Checking for the latest release…</div>
+          </div>
+
+          <!-- ===================== APP MOCK ===================== -->
+          <div class="stage reveal" style="--d: 260ms">
+            <div class="window">
+              <div class="titlebar">
+                <span class="traffic r"></span>
+                <span class="traffic y"></span>
+                <span class="traffic g"></span>
+                <span class="ttl">~/vault — Onyx</span>
+              </div>
+              <div class="panes">
+                <!-- file tree -->
+                <div class="pane tree">
+                  <div class="pane-label">Spaces</div>
+                  <div class="tree-row"><span class="ic">📓</span> Inbox</div>
+                  <div class="tree-row is-selected">
+                    <span class="ic">🗂️</span> Onyx launch
+                  </div>
+                  <div class="tree-row indent">
+                    <span class="ic">📄</span> roadmap.md
+                  </div>
+                  <div class="tree-row indent">
+                    <span class="ic">📄</span> website.md
+                  </div>
+                  <div class="tree-row"><span class="ic">🏠</span> Home</div>
+                  <div class="tree-row"><span class="ic">📚</span> Reading</div>
+                </div>
+
+                <!-- editor -->
+                <div class="pane doc">
+                  <h2>website.md</h2>
+                  <div class="meta"># Onyx launch / website</div>
+
+                  <div class="task done">
+                    <span class="check"></span>
+                    <span class="label">Lock the brand palette</span>
+                  </div>
+                  <div class="task">
+                    <span class="check"></span>
+                    <span class="label"
+                      >Wire download to
+                      <span class="wikilink">[[onyx-releases]]</span>
+                      <span class="pill due">📅 today</span></span
+                    >
+                  </div>
+                  <div class="task">
+                    <span class="check"></span>
+                    <span class="label"
+                      >Write the hero copy
+                      <span class="pill">^t-3f9a21</span></span
+                    >
+                  </div>
+                  <div class="task">
+                    <span class="check"></span>
+                    <span class="label"
+                      >Ship v1 <span class="pill crit">📅 overdue</span></span
+                    >
+                  </div>
+                  <div class="task done">
+                    <span class="check"></span>
+                    <span class="label">Notarize the build</span>
+                  </div>
+                </div>
+
+                <!-- right rail -->
+                <div class="pane rail">
+                  <div class="pane-label">Agenda</div>
+                  <p class="group">Today</p>
+                  <div class="r-task">
+                    <span class="dotk"></span> Wire download button
+                  </div>
+                  <div class="r-task">
+                    <span class="dotk w"></span> Review PR #42
+                  </div>
+                  <hr />
+                  <p class="group">Overdue</p>
+                  <div class="r-task">
+                    <span class="dotk c"></span> Ship v1
+                  </div>
+                  <hr />
+                  <p class="group">Inbox</p>
+                  <div class="r-task">
+                    <span class="dotk"></span> Capture meeting notes
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== FEATURES ===================== -->
+      <section id="features">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <h2>Your files. Your format. Just faster.</h2>
+            <p>
+              Onyx adds structure on top of plain markdown — never instead of
+              it.
+            </p>
+          </div>
+
+          <div class="grid">
+            <div class="card reveal">
+              <div class="ico">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+              </div>
+              <h3>Plain markdown, always</h3>
+              <p>
+                Open your vault in any editor and nothing is lost. Onyx writes
+                metadata under a tidy <code>onyx:</code> key — your own
+                frontmatter is never touched.
+              </p>
+            </div>
+
+            <div class="card reveal" style="--d: 60ms">
+              <div class="ico">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <h3>First-class checkboxes</h3>
+              <p>
+                Every <code>- [ ]</code> gets a stable identity, metadata, and
+                queryable state. Tasks become real objects, not just text.
+              </p>
+            </div>
+
+            <div class="card reveal" style="--d: 120ms">
+              <div class="ico">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <h3>Today / Week / Overdue</h3>
+              <p>
+                Due dates roll up into instant agenda views — under 50&nbsp;ms no
+                matter how big the vault gets, thanks to the SQLite sidecar.
+              </p>
+            </div>
+
+            <div class="card reveal">
+              <div class="ico">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg>
+              </div>
+              <h3>Wikilinks &amp; backlinks</h3>
+              <p>
+                Obsidian-style <code>[[wikilinks]]</code> connect files,
+                headings, and individual tasks — with a backlinks panel to walk
+                them in reverse.
+              </p>
+            </div>
+
+            <div class="card reveal" style="--d: 60ms">
+              <div class="ico">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+              </div>
+              <h3>Automatic archival</h3>
+              <p>
+                Finished tasks tuck themselves into a per-project
+                <code>.completed.md</code> with a timestamp and their original
+                heading path. Source always wins on conflict.
+              </p>
+            </div>
+
+            <div class="card reveal" style="--d: 120ms">
+              <div class="ico">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <h3>Local-first &amp; private</h3>
+              <p>
+                Everything lives on your disk. No account, no cloud, no
+                telemetry. A native Tauri build — roughly <code>10&nbsp;MB</code>
+                and <code>~80&nbsp;MB</code> of RAM, not a browser in disguise.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== STATS ===================== -->
+      <section id="how" style="padding-top: 0">
+        <div class="wrap">
+          <div class="stats reveal">
+            <div class="stat">
+              <div class="num">~10<span class="u">MB</span></div>
+              <div class="lbl">App bundle</div>
+            </div>
+            <div class="stat">
+              <div class="num">&lt;50<span class="u">ms</span></div>
+              <div class="lbl">Query latency</div>
+            </div>
+            <div class="stat">
+              <div class="num">100<span class="u">%</span></div>
+              <div class="lbl">On your machine</div>
+            </div>
+            <div class="stat">
+              <div class="num">0</div>
+              <div class="lbl">Accounts required</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== FINAL CTA ===================== -->
+      <section class="cta-final">
+        <div class="wrap">
+          <div class="cta-card reveal">
+            <h2>Own your todos again.</h2>
+            <p>
+              Free, open releases. Apple-signed &amp; notarized, with built-in
+              auto-updates. Point it at any folder of markdown and go.
+            </p>
+            <div class="dl">
+              <a
+                class="btn-dl is-loading"
+                id="btn-download-2"
+                href="https://github.com/hellojebus/onyx-releases/releases/latest"
+              >
+                <svg
+                  class="apple"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M16.36 12.78c.02 2.6 2.28 3.46 2.3 3.47-.02.06-.36 1.24-1.19 2.46-.72 1.05-1.46 2.1-2.64 2.12-1.15.02-1.53-.68-2.85-.68-1.32 0-1.74.66-2.83.7-1.13.04-2-1.13-2.72-2.18-1.48-2.15-2.62-6.07-1.1-8.72.76-1.32 2.12-2.15 3.59-2.18 1.12-.02 2.17.75 2.85.75.68 0 1.96-.93 3.3-.79.56.02 2.13.23 3.14 1.7-.08.05-1.87 1.1-1.85 3.28M14.2 5.34c.6-.73 1.01-1.74.9-2.75-.87.03-1.92.58-2.55 1.3-.56.64-1.05 1.67-.92 2.65.97.08 1.96-.49 2.57-1.2"
+                  />
+                </svg>
+                <span id="btn-label-2">Download for macOS</span>
+              </a>
+              <div class="dl-meta" id="dl-meta-2"></div>
+            </div>
+            <div class="req">
+              macOS 12 Monterey or later · Apple Silicon &amp; Intel (universal)
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer>
+      <div class="wrap foot">
+        <a class="brand" href="#top">
+          <span class="mark"><i></i></span>
+          Onyx
+        </a>
+        <div class="foot-links">
+          <a
+            href="https://github.com/hellojebus/onyx-releases/releases"
+            target="_blank"
+            rel="noopener"
+            >Releases</a
+          >
+          <a href="#features">Features</a>
+          <a href="#download">Download</a>
+        </div>
+        <div>© <span id="year"></span> Onyx</div>
+      </div>
+    </footer>
+
+    <script>
+      // ---------- Config ----------
+      var RELEASES_REPO = "hellojebus/onyx-releases";
+      var RELEASES_PAGE =
+        "https://github.com/" + RELEASES_REPO + "/releases/latest";
+      var API =
+        "https://api.github.com/repos/" + RELEASES_REPO + "/releases/latest";
+
+      // ---------- Year ----------
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // ---------- Nav shadow on scroll ----------
+      var nav = document.getElementById("nav");
+      function onScroll() {
+        nav.classList.toggle("is-scrolled", window.scrollY > 8);
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+
+      // ---------- Reveal on scroll ----------
+      (function () {
+        var els = document.querySelectorAll(".reveal");
+        if (!("IntersectionObserver" in window)) {
+          els.forEach(function (e) {
+            e.classList.add("is-in");
+          });
+          return;
+        }
+        var io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (en) {
+              if (en.isIntersecting) {
+                en.target.classList.add("is-in");
+                io.unobserve(en.target);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+        );
+        els.forEach(function (e) {
+          io.observe(e);
+        });
+      })();
+
+      // ---------- Live download wiring ----------
+      function fmtSize(bytes) {
+        if (!bytes && bytes !== 0) return "";
+        var mb = bytes / (1024 * 1024);
+        return mb >= 1 ? mb.toFixed(1) + " MB" : Math.round(bytes / 1024) + " KB";
+      }
+
+      function setButtons(href, label) {
+        ["btn-download", "btn-download-2"].forEach(function (id) {
+          var b = document.getElementById(id);
+          if (b) {
+            b.href = href;
+            b.classList.remove("is-loading");
+          }
+        });
+        if (label) {
+          ["btn-label", "btn-label-2"].forEach(function (id) {
+            var l = document.getElementById(id);
+            if (l) l.textContent = label;
+          });
+        }
+      }
+
+      function setMeta(html) {
+        ["dl-meta", "dl-meta-2"].forEach(function (id) {
+          var m = document.getElementById(id);
+          if (m) m.innerHTML = html;
+        });
+      }
+
+      function fallback() {
+        // Always usable: send people to the latest release page on GitHub.
+        setButtons(RELEASES_PAGE, "Download for macOS");
+        setMeta(
+          'Get the latest <code style="font-family:var(--mono)"></code>' +
+            '<a href="' +
+            RELEASES_PAGE +
+            '" target="_blank" rel="noopener">build on GitHub →</a>'
+        );
+      }
+
+      (function loadLatest() {
+        if (!window.fetch) {
+          fallback();
+          return;
+        }
+        fetch(API, { headers: { Accept: "application/vnd.github+json" } })
+          .then(function (r) {
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return r.json();
+          })
+          .then(function (rel) {
+            var assets = rel.assets || [];
+            // Prefer the .dmg installer; ignore updater payloads/sigs.
+            var dmg = assets.filter(function (a) {
+              return /\.dmg$/i.test(a.name);
+            })[0];
+
+            var version = rel.tag_name || rel.name || "";
+            var date = rel.published_at
+              ? new Date(rel.published_at).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })
+              : "";
+
+            if (dmg) {
+              setButtons(dmg.browser_download_url, "Download for macOS");
+              var bits = [];
+              if (version) bits.push(version);
+              if (dmg.size) bits.push(fmtSize(dmg.size));
+              if (date) bits.push(date);
+              setMeta(
+                bits
+                  .map(function (b) {
+                    return "<span>" + b + "</span>";
+                  })
+                  .join('<span class="sep">·</span>') +
+                  '<span class="sep">·</span>' +
+                  '<a href="' +
+                  RELEASES_PAGE +
+                  '" target="_blank" rel="noopener">all releases</a>'
+              );
+            } else {
+              // Release exists but no DMG asset yet — go to the release page.
+              setButtons(rel.html_url || RELEASES_PAGE, "Download for macOS");
+              setMeta(
+                (version ? "<span>" + version + "</span>" : "") +
+                  '<a href="' +
+                  RELEASES_PAGE +
+                  '" target="_blank" rel="noopener">View on GitHub →</a>'
+              );
+            }
+          })
+          .catch(function () {
+            fallback();
+          });
+      })();
+    </script>
+  </body>
+</html>

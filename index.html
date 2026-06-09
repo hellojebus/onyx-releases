@@ -1026,8 +1026,7 @@
         display: none;
       }
       .types-grid[data-active="work"] .type-card[data-space="work"],
-      .types-grid[data-active="personal"]
-        .type-card[data-space="personal"] {
+      .types-grid[data-active="personal"] .type-card[data-space="personal"] {
         display: flex;
       }
       .type-card {
@@ -1040,7 +1039,9 @@
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
-        transition: transform 0.16s ease, box-shadow 0.16s ease,
+        transition:
+          transform 0.16s ease,
+          box-shadow 0.16s ease,
           border-color 0.16s ease;
       }
       .type-card:hover {
@@ -1056,7 +1057,11 @@
         display: grid;
         place-items: center;
         color: var(--c, var(--accent-dim));
-        background: color-mix(in srgb, var(--c, var(--accent)) 14%, transparent);
+        background: color-mix(
+          in srgb,
+          var(--c, var(--accent)) 14%,
+          transparent
+        );
       }
       .type-ico svg {
         width: 21px;
@@ -1307,7 +1312,12 @@
               click.
             </p>
 
-            <div class="window" id="mockWindow" data-space-host data-active="work">
+            <div
+              class="window"
+              id="mockWindow"
+              data-space-host
+              data-active="work"
+            >
               <div class="titlebar">
                 <span class="traffic r"></span>
                 <span class="traffic y"></span>
@@ -1751,9 +1761,9 @@
             </span>
             <h2>Every Space gets its own types.</h2>
             <p>
-              Set up clients and invoices for work, books and trips for
-              personal — create a type for whatever you keep track of, and Onyx
-              treats each one as its own thing.
+              Set up clients and invoices for work, books and trips for personal
+              — create a type for whatever you keep track of, and Onyx treats
+              each one as its own thing.
             </p>
           </div>
 
@@ -1785,7 +1795,17 @@
             <!-- WORK types -->
             <div class="type-card" data-space="work" style="--c: #6c5ce7">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="2" y="7" width="20" height="14" rx="2" />
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                </svg>
               </div>
               <div class="nm">Clients</div>
               <div class="ct">14 records</div>
@@ -1793,7 +1813,18 @@
 
             <div class="type-card" data-space="work" style="--c: #cf8a3a">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                  <polyline points="2 17 12 22 22 17" />
+                  <polyline points="2 12 12 17 22 12" />
+                </svg>
               </div>
               <div class="nm">Projects</div>
               <div class="ct">9 records</div>
@@ -1801,7 +1832,22 @@
 
             <div class="type-card" data-space="work" style="--c: #4a78c8">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                  />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <line x1="10" y1="9" x2="8" y2="9" />
+                </svg>
               </div>
               <div class="nm">Invoices</div>
               <div class="ct">31 records</div>
@@ -1809,7 +1855,19 @@
 
             <div class="type-card" data-space="work" style="--c: #2f9e9e">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
               </div>
               <div class="nm">Meetings</div>
               <div class="ct">22 records</div>
@@ -1817,7 +1875,16 @@
 
             <div class="type-card" data-space="work" style="--c: #c264a8">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
               </div>
               <div class="nm">Campaigns</div>
               <div class="ct">7 records</div>
@@ -1825,7 +1892,19 @@
 
             <div class="type-card" data-space="work" style="--c: #3f9d76">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
               </div>
               <div class="nm">Contacts</div>
               <div class="ct">38 records</div>
@@ -1833,7 +1912,19 @@
 
             <div class="type-card" data-space="work" style="--c: #c8625f">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="6" y1="3" x2="6" y2="15" />
+                  <circle cx="18" cy="6" r="3" />
+                  <circle cx="6" cy="18" r="3" />
+                  <path d="M18 9a9 9 0 0 1-9 9" />
+                </svg>
               </div>
               <div class="nm">Roadmaps</div>
               <div class="ct">4 records</div>
@@ -1842,7 +1933,19 @@
             <!-- PERSONAL types -->
             <div class="type-card" data-space="personal" style="--c: #c8625f">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                  <path
+                    d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+                  />
+                </svg>
               </div>
               <div class="nm">Books</div>
               <div class="ct">52 records</div>
@@ -1850,7 +1953,17 @@
 
             <div class="type-card" data-space="personal" style="--c: #2f9e9e">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
               </div>
               <div class="nm">Trips</div>
               <div class="ct">6 records</div>
@@ -1858,7 +1971,20 @@
 
             <div class="type-card" data-space="personal" style="--c: #b8843c">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                  <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                  <line x1="6" y1="1" x2="6" y2="4" />
+                  <line x1="10" y1="1" x2="10" y2="4" />
+                  <line x1="14" y1="1" x2="14" y2="4" />
+                </svg>
               </div>
               <div class="nm">Recipes</div>
               <div class="ct">27 records</div>
@@ -1866,7 +1992,30 @@
 
             <div class="type-card" data-space="personal" style="--c: #c264a8">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect
+                    x="2"
+                    y="2"
+                    width="20"
+                    height="20"
+                    rx="2.18"
+                    ry="2.18"
+                  />
+                  <line x1="7" y1="2" x2="7" y2="22" />
+                  <line x1="17" y1="2" x2="17" y2="22" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                  <line x1="2" y1="7" x2="7" y2="7" />
+                  <line x1="2" y1="17" x2="7" y2="17" />
+                  <line x1="17" y1="17" x2="22" y2="17" />
+                  <line x1="17" y1="7" x2="22" y2="7" />
+                </svg>
               </div>
               <div class="nm">Movies</div>
               <div class="ct">63 records</div>
@@ -1874,7 +2023,20 @@
 
             <div class="type-card" data-space="personal" style="--c: #3f9d76">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><rect x="1" y="9" width="4" height="6" rx="1"/><rect x="19" y="9" width="4" height="6" rx="1"/><path d="M5 12h14"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6.5 6.5h11" />
+                  <path d="M6.5 17.5h11" />
+                  <rect x="1" y="9" width="4" height="6" rx="1" />
+                  <rect x="19" y="9" width="4" height="6" rx="1" />
+                  <path d="M5 12h14" />
+                </svg>
               </div>
               <div class="nm">Workouts</div>
               <div class="ct">48 records</div>
@@ -1882,7 +2044,19 @@
 
             <div class="type-card" data-space="personal" style="--c: #6c5ce7">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
               </div>
               <div class="nm">Friends</div>
               <div class="ct">19 records</div>
@@ -1890,7 +2064,17 @@
 
             <div class="type-card" data-space="personal" style="--c: #cf8a3a">
               <div class="type-ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
               </div>
               <div class="nm">Habits</div>
               <div class="ct">11 records</div>
@@ -1901,30 +2085,6 @@
               <div class="type-ico">+</div>
               <div class="nm">Create your own</div>
               <div class="ct">Any type you like</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================== STATS ===================== -->
-      <section id="how" style="padding-top: 0">
-        <div class="wrap">
-          <div class="stats reveal">
-            <div class="stat">
-              <div class="num">0</div>
-              <div class="lbl">Accounts to set up</div>
-            </div>
-            <div class="stat">
-              <div class="num">0<span class="u">$</span></div>
-              <div class="lbl">To download</div>
-            </div>
-            <div class="stat">
-              <div class="num">100<span class="u">%</span></div>
-              <div class="lbl">Stays on your Mac</div>
-            </div>
-            <div class="stat">
-              <div class="num">&lt;1<span class="u">min</span></div>
-              <div class="lbl">To get going</div>
             </div>
           </div>
         </div>

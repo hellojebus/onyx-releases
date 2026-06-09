@@ -3,17 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Onyx — Markdown todos that don't fight you</title>
+    <title>Onyx — Notes and todos that just work</title>
     <meta
       name="description"
-      content="Onyx is a local-first markdown todo and project app for macOS. Plain .md files are the source of truth; a SQLite sidecar makes them fast. Free download."
+      content="Onyx is a calm notes and todo app for Mac. Write things down, keep your tasks organized, and find them later — an opinionated app that just works. Your stuff stays on your computer. Free download."
     />
 
     <!-- Open Graph / social -->
     <meta property="og:title" content="Onyx" />
     <meta
       property="og:description"
-      content="Markdown todos and projects that don't fight you. Local-first, macOS-native."
+      content="Notes and todos that just work. A simple, opinionated app that lives on your Mac — no account needed."
     />
     <meta property="og:type" content="website" />
     <meta name="theme-color" content="#f6f1e8" />
@@ -386,8 +386,8 @@
       }
       .panes {
         display: grid;
-        grid-template-columns: 196px 1fr 232px;
-        min-height: 380px;
+        grid-template-columns: 52px 190px 1fr 218px;
+        min-height: 400px;
       }
       .pane {
         padding: 16px 14px;
@@ -544,6 +544,309 @@
         margin: 16px 0;
       }
 
+      /* ---- Space switcher (above the mock) ---- */
+      .space-switch {
+        display: flex;
+        gap: 6px;
+        width: fit-content;
+        margin: 0 auto 12px;
+        padding: 5px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        box-shadow: var(--shadow-card);
+      }
+      .space-switch button {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        font-family: var(--sans);
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--fg-muted);
+        background: transparent;
+        border: 0;
+        padding: 8px 18px 8px 9px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .space-switch button .av {
+        width: 23px;
+        height: 23px;
+        border-radius: 7px;
+        display: grid;
+        place-items: center;
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 700;
+        background: var(--border);
+        color: var(--fg-muted);
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+      .space-switch button.is-active {
+        background: var(--surface);
+        color: var(--fg);
+        box-shadow: var(--shadow-card);
+      }
+      .space-switch button.is-active .av {
+        background: var(--accent);
+        color: #fff;
+      }
+      .switch-note {
+        text-align: center;
+        font-size: 13px;
+        color: var(--fg-dim);
+        margin: 0 auto 26px;
+        max-width: 42ch;
+      }
+
+      /* ---- Space rail (leftmost column inside the window) ---- */
+      .pane.spaces {
+        background: var(--paper-rec);
+        border-right: 1px solid var(--border-soft);
+        padding: 13px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .savatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        display: grid;
+        place-items: center;
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--fg-muted);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: transform 0.12s ease, box-shadow 0.15s ease,
+          background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      }
+      .savatar:hover {
+        transform: translateY(-1px);
+      }
+      .window[data-active="work"] .savatar.work,
+      .window[data-active="personal"] .savatar.personal {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+        box-shadow: 0 5px 14px rgba(108, 92, 231, 0.32);
+      }
+      .savatar.add {
+        margin-top: auto;
+        border-style: dashed;
+        color: var(--fg-dim);
+        cursor: default;
+      }
+      .savatar.add:hover {
+        transform: none;
+      }
+
+      /* ---- Tree groups / rows ---- */
+      .tree-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+        margin: 16px 6px 5px;
+      }
+      .tree-group:first-child {
+        margin-top: 2px;
+      }
+      .tree-group .cnt {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 500;
+        background: var(--surface);
+        border: 1px solid var(--border-soft);
+        border-radius: 999px;
+        padding: 0 6px;
+        color: var(--fg-dim);
+        letter-spacing: 0;
+      }
+      .tree-row .car {
+        opacity: 0.4;
+        font-size: 9px;
+        width: 9px;
+        flex: none;
+      }
+      .tree-row .dot-f {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--fg-faint);
+        margin: 0 2px;
+        flex: none;
+      }
+      .tree-row.lvl1 {
+        margin-left: 15px;
+      }
+      .tree-row.lvl2 {
+        margin-left: 30px;
+      }
+      .tree-row.dim {
+        color: var(--fg-dim);
+        font-style: italic;
+      }
+
+      /* ---- Editor: # Today heading, agenda, link chip ---- */
+      .doc h2.h-today .hash {
+        color: var(--accent-dim);
+        font-weight: 600;
+        margin-right: 4px;
+      }
+      .chip-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-family: var(--sans);
+        font-size: 11.5px;
+        color: var(--accent-dim);
+        background: var(--accent-soft);
+        border-radius: 999px;
+        padding: 2px 9px;
+        margin-left: 6px;
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+      .pull-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+        margin: 24px 0 12px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border-soft);
+      }
+      .agenda-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--fg-muted);
+        margin: 12px 0 5px;
+      }
+      .agenda-group .car {
+        opacity: 0.4;
+        font-size: 9px;
+      }
+      .agenda-group .cnt {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--fg-dim);
+      }
+      .agenda-item {
+        display: flex;
+        gap: 9px;
+        align-items: center;
+        font-size: 13.5px;
+        color: var(--fg-muted);
+        padding: 3px 0 3px 17px;
+      }
+      .agenda-item .dotk {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex: none;
+      }
+      .agenda-item .dotk.w {
+        background: var(--warn);
+      }
+      .agenda-item .dotk.c {
+        background: var(--crit);
+      }
+      .agenda-empty {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 13px;
+        color: var(--fg-dim);
+        padding: 2px 0 2px 17px;
+      }
+
+      /* ---- Right rail extras (backlinks / completed) ---- */
+      .rail .r-title {
+        font-family: var(--serif);
+        font-style: italic;
+        color: var(--fg-dim);
+        font-size: 14px;
+        margin-bottom: 14px;
+      }
+      .rail .r-link {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-size: 13px;
+        color: var(--accent-dim);
+        padding: 4px 0;
+      }
+      .rail .r-link .dotk {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex: none;
+      }
+      .rail .r-empty {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 12.5px;
+        color: var(--fg-faint);
+        padding: 2px 0;
+      }
+      .rail .r-done {
+        display: flex;
+        gap: 9px;
+        align-items: center;
+        font-size: 13px;
+        color: var(--fg-dim);
+        padding: 4px 0;
+      }
+      .rail .r-done .check-mini {
+        width: 13px;
+        height: 13px;
+        border-radius: 4px;
+        background: var(--accent);
+        position: relative;
+        flex: none;
+      }
+      .rail .r-done .check-mini::after {
+        content: "";
+        position: absolute;
+        left: 4px;
+        top: 1px;
+        width: 3px;
+        height: 6px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(43deg);
+      }
+
+      /* ---- Space visibility toggle ---- */
+      .space-view {
+        display: none;
+      }
+      .window[data-active="work"] .space-view.work,
+      .window[data-active="personal"] .space-view.personal {
+        display: block;
+      }
+
       @media (max-width: 760px) {
         .window {
           transform: none;
@@ -552,8 +855,9 @@
           grid-template-columns: 1fr;
         }
         .pane.tree,
-        .pane.rail {
-          display: none;
+        .pane.rail,
+        .pane.spaces {
+          display: none !important;
         }
       }
 
@@ -823,21 +1127,18 @@
       <section class="hero" id="download">
         <div class="wrap">
           <span class="eyebrow reveal"
-            ><span class="dot"></span> Local-first · macOS</span
+            ><span class="dot"></span> Notes &amp; todos · for Mac</span
           >
 
           <h1 class="hero-title reveal" style="--d: 60ms">
-            Markdown todos that
-            <span class="ital">don't fight you</span>.
+            Notes and todos that
+            <span class="ital">just work</span>.
           </h1>
 
           <p class="hero-sub reveal" style="--d: 120ms">
-            Plain <code style="font-family: var(--mono); font-size: 0.9em"
-              >.md</code
-            >
-            files are the source of truth. A SQLite sidecar makes every task,
-            due date, and link instantly queryable — without ever locking your
-            notes inside an app.
+            One calm place to write things down and keep your to-dos straight.
+            Jot a note, add a task, give it a due date — Onyx keeps it all
+            organized and easy to find. No setup, no learning curve.
           </p>
 
           <div class="dl reveal" style="--d: 180ms">
@@ -863,86 +1164,273 @@
 
           <!-- ===================== APP MOCK ===================== -->
           <div class="stage reveal" style="--d: 260ms">
-            <div class="window">
+            <!-- Space switcher -->
+            <div
+              class="space-switch"
+              role="tablist"
+              aria-label="Switch between spaces"
+            >
+              <button type="button" data-space-btn="work" class="is-active" role="tab">
+                <span class="av">W</span> Work
+              </button>
+              <button type="button" data-space-btn="personal" role="tab">
+                <span class="av">P</span> Personal
+              </button>
+            </div>
+            <p class="switch-note">
+              Spaces keep work and personal life fully separate — switch with a
+              click.
+            </p>
+
+            <div class="window" id="mockWindow" data-active="work">
               <div class="titlebar">
                 <span class="traffic r"></span>
                 <span class="traffic y"></span>
                 <span class="traffic g"></span>
-                <span class="ttl">~/vault — Onyx</span>
+                <span class="ttl" id="mockTtl">Northstar Studio</span>
               </div>
               <div class="panes">
-                <!-- file tree -->
-                <div class="pane tree">
-                  <div class="pane-label">Spaces</div>
-                  <div class="tree-row"><span class="ic">📓</span> Inbox</div>
-                  <div class="tree-row is-selected">
-                    <span class="ic">🗂️</span> Onyx launch
-                  </div>
-                  <div class="tree-row indent">
-                    <span class="ic">📄</span> roadmap.md
-                  </div>
-                  <div class="tree-row indent">
-                    <span class="ic">📄</span> website.md
-                  </div>
-                  <div class="tree-row"><span class="ic">🏠</span> Home</div>
-                  <div class="tree-row"><span class="ic">📚</span> Reading</div>
+                <!-- ===== Space rail (always visible) ===== -->
+                <div class="pane spaces">
+                  <span class="savatar work" data-space-av="work" title="Work"
+                    >W</span
+                  >
+                  <span
+                    class="savatar personal"
+                    data-space-av="personal"
+                    title="Personal"
+                    >P</span
+                  >
+                  <span class="savatar add" title="New space">+</span>
                 </div>
 
-                <!-- editor -->
-                <div class="pane doc">
-                  <h2>website.md</h2>
-                  <div class="meta"># Onyx launch / website</div>
+                <!-- ============ WORK: tree ============ -->
+                <div class="pane tree space-view work">
+                  <div class="tree-group">Clients <span class="cnt">3</span></div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> Acme Co
+                  </div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> Lumen
+                  </div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> Verde
+                  </div>
+
+                  <div class="tree-group">
+                    Projects <span class="cnt">2</span>
+                  </div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> Acme —
+                    Website
+                  </div>
+                  <div class="tree-row lvl1">
+                    <span class="dot-f"></span> todos
+                  </div>
+                  <div class="tree-row lvl1 dim">
+                    <span class="dot-f"></span> Archive
+                  </div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> Lumen —
+                    Brand
+                  </div>
+                  <div class="tree-row lvl1">
+                    <span class="car">▾</span><span class="ic">📁</span> Meetings
+                  </div>
+                  <div class="tree-row lvl2">
+                    <span class="dot-f"></span> notes
+                  </div>
+                  <div class="tree-row lvl1">
+                    <span class="dot-f"></span> todos
+                  </div>
+
+                  <div class="tree-group">Other <span class="cnt">2</span></div>
+                  <div class="tree-row">
+                    <span class="dot-f"></span> notes
+                  </div>
+                  <div class="tree-row is-selected">
+                    <span class="dot-f"></span> Today
+                  </div>
+                </div>
+
+                <!-- ============ WORK: editor ============ -->
+                <div class="pane doc space-view work">
+                  <h2 class="h-today"><span class="hash">#</span>Today</h2>
+                  <div class="meta">Northstar Studio · pulled from every client</div>
 
                   <div class="task done">
                     <span class="check"></span>
-                    <span class="label">Lock the brand palette</span>
+                    <span class="label">Send homepage mockups to Acme</span>
                   </div>
                   <div class="task">
                     <span class="check"></span>
                     <span class="label"
-                      >Wire download to
-                      <span class="wikilink">[[onyx-releases]]</span>
+                      >Review dev handoff for Lumen site
                       <span class="pill due">📅 today</span></span
                     >
                   </div>
                   <div class="task">
                     <span class="check"></span>
                     <span class="label"
-                      >Write the hero copy
-                      <span class="pill">^t-3f9a21</span></span
+                      >Finalize brand guidelines deck
+                      <span class="chip-link"
+                        >↗ Lumen — Brand › Deliverables</span
+                      ></span
                     >
                   </div>
                   <div class="task">
                     <span class="check"></span>
                     <span class="label"
-                      >Ship v1 <span class="pill crit">📅 overdue</span></span
+                      >Sync with <span class="wikilink">[[Priya]]</span> on the
+                      Verde launch timeline</span
+                    >
+                  </div>
+                  <div class="task">
+                    <span class="check"></span>
+                    <span class="label"
+                      >Ship Acme staging build for client review
+                      <span class="pill crit">📅 overdue</span></span
+                    >
+                  </div>
+
+                  <div class="pull-label">Pull into today</div>
+                  <div class="agenda-group">
+                    <span class="car">▾</span> Overdue
+                    <span class="cnt">1</span>
+                  </div>
+                  <div class="agenda-item">
+                    <span class="dotk c"></span> Ship Acme staging build
+                  </div>
+                  <div class="agenda-group">
+                    <span class="car">▾</span> Due today
+                    <span class="cnt">2</span>
+                  </div>
+                  <div class="agenda-item">
+                    <span class="dotk w"></span> Review dev handoff for Lumen site
+                  </div>
+                  <div class="agenda-item">
+                    <span class="dotk w"></span> Send invoice to Verde
+                  </div>
+                </div>
+
+                <!-- ============ WORK: right rail ============ -->
+                <div class="pane rail space-view work">
+                  <div class="r-title">Today</div>
+                  <p class="group">Backlinks</p>
+                  <div class="r-link"><span class="dotk"></span> Acme — Website</div>
+                  <div class="r-link"><span class="dotk"></span> Q3 client roadmap</div>
+                  <hr />
+                  <p class="group">Completed</p>
+                  <div class="r-done">
+                    <span class="check-mini"></span> Send homepage mockups to Acme
+                  </div>
+                  <div class="r-done">
+                    <span class="check-mini"></span> Approve Lumen hero copy
+                  </div>
+                </div>
+
+                <!-- ============ PERSONAL: tree ============ -->
+                <div class="pane tree space-view personal">
+                  <div class="tree-group">People <span class="cnt">2</span></div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> Mom
+                  </div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> Alex
+                  </div>
+
+                  <div class="tree-group">Lists <span class="cnt">2</span></div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> Home
+                    renovation
+                  </div>
+                  <div class="tree-row lvl1">
+                    <span class="dot-f"></span> Kitchen
+                  </div>
+                  <div class="tree-row lvl1">
+                    <span class="dot-f"></span> Budget
+                  </div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> Trips
+                  </div>
+                  <div class="tree-row lvl1">
+                    <span class="dot-f"></span> Japan 2026
+                  </div>
+
+                  <div class="tree-group">Other <span class="cnt">2</span></div>
+                  <div class="tree-row">
+                    <span class="dot-f"></span> notes
+                  </div>
+                  <div class="tree-row is-selected">
+                    <span class="dot-f"></span> Today
+                  </div>
+                </div>
+
+                <!-- ============ PERSONAL: editor ============ -->
+                <div class="pane doc space-view personal">
+                  <h2 class="h-today"><span class="hash">#</span>Today</h2>
+                  <div class="meta">Personal · everything due today</div>
+
+                  <div class="task done">
+                    <span class="check"></span>
+                    <span class="label">Pick a paint color</span>
+                  </div>
+                  <div class="task">
+                    <span class="check"></span>
+                    <span class="label"
+                      >Get a quote from
+                      <span class="wikilink">[[the contractor]]</span>
+                      <span class="pill due">📅 today</span></span
+                    >
+                  </div>
+                  <div class="task">
+                    <span class="check"></span>
+                    <span class="label"
+                      >Book dentist appointment
+                      <span class="chip-link">↗ Health › Appointments</span></span
+                    >
+                  </div>
+                  <div class="task">
+                    <span class="check"></span>
+                    <span class="label"
+                      >Return the old sink
+                      <span class="pill crit">📅 overdue</span></span
                     >
                   </div>
                   <div class="task done">
                     <span class="check"></span>
-                    <span class="label">Notarize the build</span>
+                    <span class="label">Measure the countertop</span>
+                  </div>
+
+                  <div class="pull-label">Pull into today</div>
+                  <div class="agenda-group">
+                    <span class="car">▾</span> Overdue
+                    <span class="cnt">1</span>
+                  </div>
+                  <div class="agenda-item">
+                    <span class="dotk c"></span> Return the old sink
+                  </div>
+                  <div class="agenda-group">
+                    <span class="car">▾</span> Due today
+                    <span class="cnt">1</span>
+                  </div>
+                  <div class="agenda-item">
+                    <span class="dotk w"></span> Get a quote from the contractor
                   </div>
                 </div>
 
-                <!-- right rail -->
-                <div class="pane rail">
-                  <div class="pane-label">Agenda</div>
-                  <p class="group">Today</p>
-                  <div class="r-task">
-                    <span class="dotk"></span> Wire download button
-                  </div>
-                  <div class="r-task">
-                    <span class="dotk w"></span> Review PR #42
-                  </div>
+                <!-- ============ PERSONAL: right rail ============ -->
+                <div class="pane rail space-view personal">
+                  <div class="r-title">Today</div>
+                  <p class="group">Backlinks</p>
+                  <div class="r-empty">No incoming links</div>
                   <hr />
-                  <p class="group">Overdue</p>
-                  <div class="r-task">
-                    <span class="dotk c"></span> Ship v1
+                  <p class="group">Completed</p>
+                  <div class="r-done">
+                    <span class="check-mini"></span> Pick a paint color
                   </div>
-                  <hr />
-                  <p class="group">Inbox</p>
-                  <div class="r-task">
-                    <span class="dotk"></span> Capture meeting notes
+                  <div class="r-done">
+                    <span class="check-mini"></span> Measure the countertop
                   </div>
                 </div>
               </div>
@@ -955,45 +1443,47 @@
       <section id="features">
         <div class="wrap">
           <div class="section-head reveal">
-            <h2>Your files. Your format. Just faster.</h2>
+            <h2>Everything you need. Nothing you don't.</h2>
             <p>
-              Onyx adds structure on top of plain markdown — never instead of
-              it.
+              Notes and todos in one place, with the fiddly parts already decided
+              for you.
             </p>
           </div>
 
           <div class="grid">
             <div class="card reveal">
               <div class="ico">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
               </div>
-              <h3>Plain markdown, always</h3>
+              <h3>Notes and tasks together</h3>
               <p>
-                Open your vault in any editor and nothing is lost. Onyx writes
-                metadata under a tidy <code>onyx:</code> key — your own
-                frontmatter is never touched.
+                Write a note, drop a task into it, check it off when it's done.
+                Your thoughts and your to-dos live side by side — it feels like
+                jotting on paper, only it never gets lost.
               </p>
             </div>
 
             <div class="card reveal" style="--d: 60ms">
               <div class="ico">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               </div>
-              <h3>First-class checkboxes</h3>
+              <h3>Knows what's due</h3>
               <p>
-                Every <code>- [ ]</code> gets a stable identity, metadata, and
-                queryable state. Tasks become real objects, not just text.
+                Add a due date and Onyx gathers it for you. One glance shows
+                what's for today, what's coming up this week, and what slipped
+                past — across everything you're tracking.
               </p>
             </div>
 
             <div class="card reveal" style="--d: 120ms">
               <div class="ico">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
               </div>
-              <h3>Today / Week / Overdue</h3>
+              <h3>Separate Spaces for everything</h3>
               <p>
-                Due dates roll up into instant agenda views — under 50&nbsp;ms no
-                matter how big the vault gets, thanks to the SQLite sidecar.
+                Give work, home, and that side project their own Space. Each one
+                has its own projects and lists, and you switch between them with
+                a single click — so things never bleed together.
               </p>
             </div>
 
@@ -1001,11 +1491,11 @@
               <div class="ico">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg>
               </div>
-              <h3>Wikilinks &amp; backlinks</h3>
+              <h3>Link things together</h3>
               <p>
-                Obsidian-style <code>[[wikilinks]]</code> connect files,
-                headings, and individual tasks — with a backlinks panel to walk
-                them in reverse.
+                Mention another note by name and it turns into a link. Handy for
+                connecting a task or note to the person, project, or place it
+                belongs to — no thinking required.
               </p>
             </div>
 
@@ -1013,11 +1503,11 @@
               <div class="ico">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
               </div>
-              <h3>Automatic archival</h3>
+              <h3>Tidies up after you</h3>
               <p>
-                Finished tasks tuck themselves into a per-project
-                <code>.completed.md</code> with a timestamp and their original
-                heading path. Source always wins on conflict.
+                Finished tasks quietly move out of the way once they're done, so
+                your list stays focused on what's left. Nothing is deleted — it's
+                all still there if you go looking.
               </p>
             </div>
 
@@ -1025,11 +1515,11 @@
               <div class="ico">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               </div>
-              <h3>Local-first &amp; private</h3>
+              <h3>Yours, and only yours</h3>
               <p>
-                Everything lives on your disk. No account, no cloud, no
-                telemetry. A native Tauri build — roughly <code>10&nbsp;MB</code>
-                and <code>~80&nbsp;MB</code> of RAM, not a browser in disguise.
+                Everything stays on your Mac. No account to make, no cloud to
+                trust, nothing tracked. It opens fast, stays out of your way, and
+                your notes and todos are just files you own forever.
               </p>
             </div>
           </div>
@@ -1041,20 +1531,20 @@
         <div class="wrap">
           <div class="stats reveal">
             <div class="stat">
-              <div class="num">~10<span class="u">MB</span></div>
-              <div class="lbl">App bundle</div>
+              <div class="num">0</div>
+              <div class="lbl">Accounts to set up</div>
             </div>
             <div class="stat">
-              <div class="num">&lt;50<span class="u">ms</span></div>
-              <div class="lbl">Query latency</div>
+              <div class="num">0<span class="u">$</span></div>
+              <div class="lbl">To download</div>
             </div>
             <div class="stat">
               <div class="num">100<span class="u">%</span></div>
-              <div class="lbl">On your machine</div>
+              <div class="lbl">Stays on your Mac</div>
             </div>
             <div class="stat">
-              <div class="num">0</div>
-              <div class="lbl">Accounts required</div>
+              <div class="num">&lt;1<span class="u">min</span></div>
+              <div class="lbl">To get going</div>
             </div>
           </div>
         </div>
@@ -1064,10 +1554,10 @@
       <section class="cta-final">
         <div class="wrap">
           <div class="cta-card reveal">
-            <h2>Own your todos again.</h2>
+            <h2>Get your notes and todos sorted.</h2>
             <p>
-              Free, open releases. Apple-signed &amp; notarized, with built-in
-              auto-updates. Point it at any folder of markdown and go.
+              Free to download, and it keeps itself up to date. Open it, start
+              your first note, and you're going in under a minute.
             </p>
             <div class="dl">
               <a
@@ -1136,6 +1626,41 @@
       }
       window.addEventListener("scroll", onScroll, { passive: true });
       onScroll();
+
+      // ---------- Space switcher (mock UI) ----------
+      (function () {
+        var win = document.getElementById("mockWindow");
+        if (!win) return;
+        var ttl = document.getElementById("mockTtl");
+        var names = { work: "Northstar Studio", personal: "Personal" };
+        var btns = document.querySelectorAll("[data-space-btn]");
+
+        function setSpace(space) {
+          if (!names[space]) return;
+          win.setAttribute("data-active", space);
+          if (ttl) ttl.textContent = names[space];
+          btns.forEach(function (b) {
+            b.classList.toggle(
+              "is-active",
+              b.getAttribute("data-space-btn") === space
+            );
+          });
+        }
+
+        btns.forEach(function (b) {
+          b.addEventListener("click", function () {
+            setSpace(b.getAttribute("data-space-btn"));
+          });
+        });
+        // The in-window space avatars switch too.
+        document.querySelectorAll("[data-space-av]").forEach(function (a) {
+          a.addEventListener("click", function () {
+            setSpace(a.getAttribute("data-space-av"));
+          });
+        });
+
+        setSpace("work");
+      })();
 
       // ---------- Reveal on scroll ----------
       (function () {

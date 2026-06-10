@@ -649,7 +649,8 @@
         transform: translateY(-1px);
       }
       .window[data-active="work"] .savatar.work,
-      .window[data-active="personal"] .savatar.personal {
+      .window[data-active="personal"] .savatar.personal,
+      .window[data-active="student"] .savatar.student {
         background: var(--accent);
         color: #fff;
         border-color: var(--accent);
@@ -860,7 +861,8 @@
         display: none;
       }
       .window[data-active="work"] .space-view.work,
-      .window[data-active="personal"] .space-view.personal {
+      .window[data-active="personal"] .space-view.personal,
+      .window[data-active="student"] .space-view.student {
         display: block;
       }
 
@@ -1026,7 +1028,8 @@
         display: none;
       }
       .types-grid[data-active="work"] .type-card[data-space="work"],
-      .types-grid[data-active="personal"] .type-card[data-space="personal"] {
+      .types-grid[data-active="personal"] .type-card[data-space="personal"],
+      .types-grid[data-active="student"] .type-card[data-space="student"] {
         display: flex;
       }
       .type-card {
@@ -1384,10 +1387,13 @@
               <button type="button" data-space-btn="personal" role="tab">
                 <span class="av">P</span> Personal
               </button>
+              <button type="button" data-space-btn="student" role="tab">
+                <span class="av">S</span> Student
+              </button>
             </div>
             <p class="switch-note">
-              Spaces keep work and personal life fully separate — switch with a
-              click.
+              Spaces keep work, school, and personal life fully separate —
+              switch with a click.
             </p>
 
             <div
@@ -1413,6 +1419,12 @@
                     data-space-av="personal"
                     title="Personal"
                     >P</span
+                  >
+                  <span
+                    class="savatar student"
+                    data-space-av="student"
+                    title="Student"
+                    >S</span
                   >
                   <span class="savatar add" title="New space">+</span>
                 </div>
@@ -1657,6 +1669,138 @@
                     <span class="check-mini"></span> Measure the countertop
                   </div>
                 </div>
+
+                <!-- ============ STUDENT: tree ============ -->
+                <div class="pane tree space-view student">
+                  <div class="tree-group">
+                    Courses <span class="cnt">3</span>
+                  </div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> CS 201
+                  </div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> Biology
+                    110
+                  </div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> History
+                    220
+                  </div>
+
+                  <div class="tree-group">
+                    Coursework <span class="cnt">2</span>
+                  </div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> Term
+                    paper
+                  </div>
+                  <div class="tree-row lvl1">
+                    <span class="dot-f"></span> Research
+                  </div>
+                  <div class="tree-row lvl1 dim">
+                    <span class="dot-f"></span> Drafts
+                  </div>
+                  <div class="tree-row">
+                    <span class="car">▾</span><span class="ic">📁</span> CS 201 —
+                    Project
+                  </div>
+                  <div class="tree-row lvl1">
+                    <span class="car">▾</span
+                    ><span class="ic">📁</span> Lectures
+                  </div>
+                  <div class="tree-row lvl2">
+                    <span class="dot-f"></span> notes
+                  </div>
+                  <div class="tree-row lvl1">
+                    <span class="dot-f"></span> todos
+                  </div>
+
+                  <div class="tree-group">Other <span class="cnt">2</span></div>
+                  <div class="tree-row"><span class="dot-f"></span> notes</div>
+                  <div class="tree-row is-selected">
+                    <span class="dot-f"></span> Today
+                  </div>
+                </div>
+
+                <!-- ============ STUDENT: editor ============ -->
+                <div class="pane doc space-view student">
+                  <h2 class="h-today"><span class="hash">#</span>Today</h2>
+                  <div class="meta">Spring Semester · due across every course</div>
+
+                  <div class="task done">
+                    <span class="check"></span>
+                    <span class="label">Submit CS 201 problem set</span>
+                  </div>
+                  <div class="task">
+                    <span class="check"></span>
+                    <span class="label"
+                      >Read Biology ch. 7 before lab
+                      <span class="pill due">📅 today</span></span
+                    >
+                  </div>
+                  <div class="task">
+                    <span class="check"></span>
+                    <span class="label"
+                      >Outline the History essay
+                      <span class="chip-link"
+                        >↗ History 220 › Essays</span
+                      ></span
+                    >
+                  </div>
+                  <div class="task">
+                    <span class="check"></span>
+                    <span class="label"
+                      >Email <span class="wikilink">[[Prof. Reyes]]</span> about
+                      an extension</span
+                    >
+                  </div>
+                  <div class="task">
+                    <span class="check"></span>
+                    <span class="label"
+                      >Finish the chem lab report
+                      <span class="pill crit">📅 overdue</span></span
+                    >
+                  </div>
+
+                  <div class="pull-label">Pull into today</div>
+                  <div class="agenda-group">
+                    <span class="car">▾</span> Overdue
+                    <span class="cnt">1</span>
+                  </div>
+                  <div class="agenda-item">
+                    <span class="dotk c"></span> Finish the chem lab report
+                  </div>
+                  <div class="agenda-group">
+                    <span class="car">▾</span> Due today
+                    <span class="cnt">2</span>
+                  </div>
+                  <div class="agenda-item">
+                    <span class="dotk w"></span> Read Biology ch. 7 before lab
+                  </div>
+                  <div class="agenda-item">
+                    <span class="dotk w"></span> Study for the CS 201 midterm
+                  </div>
+                </div>
+
+                <!-- ============ STUDENT: right rail ============ -->
+                <div class="pane rail space-view student">
+                  <div class="r-title">Today</div>
+                  <p class="group">Backlinks</p>
+                  <div class="r-link">
+                    <span class="dotk"></span> CS 201 — Project
+                  </div>
+                  <div class="r-link">
+                    <span class="dotk"></span> Midterm study plan
+                  </div>
+                  <hr />
+                  <p class="group">Completed</p>
+                  <div class="r-done">
+                    <span class="check-mini"></span> Submit CS 201 problem set
+                  </div>
+                  <div class="r-done">
+                    <span class="check-mini"></span> Register for fall classes
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1839,9 +1983,9 @@
             </span>
             <h2>Your Space, your way.</h2>
             <p>
-              Set up clients and invoices for work, books and trips for personal
-              — create a type for whatever you keep track of, and Onyx treats
-              each one as its own thing.
+              Clients and invoices for work, courses and assignments for
+              school, books and trips for personal — create a type for whatever
+              you keep track of, and Onyx treats each one as its own thing.
             </p>
           </div>
 
@@ -1861,6 +2005,9 @@
             </button>
             <button type="button" data-space-btn="personal" role="tab">
               <span class="av">P</span> Personal
+            </button>
+            <button type="button" data-space-btn="student" role="tab">
+              <span class="av">S</span> Student
             </button>
           </div>
 
@@ -2158,6 +2305,143 @@
               <div class="ct">11 records</div>
             </div>
 
+            <!-- STUDENT types -->
+            <div class="type-card" data-space="student" style="--c: #6c5ce7">
+              <div class="type-ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+              </div>
+              <div class="nm">Courses</div>
+              <div class="ct">5 records</div>
+            </div>
+
+            <div class="type-card" data-space="student" style="--c: #c8625f">
+              <div class="type-ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="9 11 12 14 22 4" />
+                  <path
+                    d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"
+                  />
+                </svg>
+              </div>
+              <div class="nm">Assignments</div>
+              <div class="ct">12 records</div>
+            </div>
+
+            <div class="type-card" data-space="student" style="--c: #cf8a3a">
+              <div class="type-ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                  />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <line x1="10" y1="9" x2="8" y2="9" />
+                </svg>
+              </div>
+              <div class="nm">Exams</div>
+              <div class="ct">4 records</div>
+            </div>
+
+            <div class="type-card" data-space="student" style="--c: #4a78c8">
+              <div class="type-ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                  <line x1="8" y1="21" x2="16" y2="21" />
+                  <line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+              </div>
+              <div class="nm">Lectures</div>
+              <div class="ct">36 records</div>
+            </div>
+
+            <div class="type-card" data-space="student" style="--c: #2f9e9e">
+              <div class="type-ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                </svg>
+              </div>
+              <div class="nm">Readings</div>
+              <div class="ct">23 records</div>
+            </div>
+
+            <div class="type-card" data-space="student" style="--c: #3f9d76">
+              <div class="type-ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </div>
+              <div class="nm">Professors</div>
+              <div class="ct">6 records</div>
+            </div>
+
+            <div class="type-card" data-space="student" style="--c: #c264a8">
+              <div class="type-ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                </svg>
+              </div>
+              <div class="nm">Flashcards</div>
+              <div class="ct">84 records</div>
+            </div>
+
             <!-- Always present -->
             <div class="type-card is-add">
               <div class="type-ico">+</div>
@@ -2263,7 +2547,11 @@
         var hosts = document.querySelectorAll("[data-space-host]");
         if (!hosts.length) return;
         var ttl = document.getElementById("mockTtl");
-        var names = { work: "Northstar Studio", personal: "Personal" };
+        var names = {
+          work: "Northstar Studio",
+          personal: "Personal",
+          student: "Spring Semester",
+        };
         var btns = document.querySelectorAll("[data-space-btn]");
 
         function setSpace(space) {

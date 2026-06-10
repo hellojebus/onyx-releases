@@ -72,7 +72,7 @@
         --shadow-pop: 0 1px 2px rgba(60, 48, 28, 0.06),
           0 16px 44px rgba(60, 48, 28, 0.14);
 
-        --maxw: 1080px;
+        --maxw: 1200px;
       }
 
       * {
@@ -1004,13 +1004,435 @@
       }
 
       /* =========================================================
+         How it works — the "turn" (todo → graph)
+         ========================================================= */
+      .turn-demo {
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      .demo-dots {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 18px;
+      }
+      .demo-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--border);
+        transition:
+          background 0.3s ease,
+          transform 0.3s ease;
+      }
+      .demo-dot.on {
+        background: var(--accent);
+        transform: scale(1.18);
+      }
+      .demo-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-pop);
+        overflow: hidden;
+      }
+      .demo-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 42px;
+        padding: 0 16px;
+        background: var(--surface-2);
+        border-bottom: 1px solid var(--border-soft);
+      }
+      .demo-bar-ttl {
+        margin-left: 10px;
+        font-size: 13px;
+        color: var(--fg-dim);
+        font-family: var(--mono);
+        transition: color 0.3s ease;
+      }
+      .demo-body {
+        position: relative;
+        min-height: 284px;
+      }
+      .demo-panel {
+        position: absolute;
+        inset: 30px 34px;
+        opacity: 0;
+        transform: translateY(7px);
+        transition:
+          opacity 0.45s ease,
+          transform 0.45s ease;
+        pointer-events: none;
+      }
+      .demo-task {
+        display: flex;
+        align-items: flex-start;
+      }
+      .demo-record {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .demo-list {
+        position: relative;
+        width: 100%;
+      }
+      .demo-list .task {
+        font-size: 17px;
+        padding: 6px 0;
+      }
+      .typed-task {
+        position: relative;
+      }
+      /* @-mention autocomplete */
+      .mention-menu {
+        position: absolute;
+        left: 27px;
+        top: calc(100% + 4px);
+        width: 244px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-pop);
+        padding: 5px;
+        opacity: 0;
+        transform: translateY(-5px);
+        transition:
+          opacity 0.25s ease,
+          transform 0.25s ease;
+        pointer-events: none;
+        z-index: 5;
+      }
+      .mention-menu.show {
+        opacity: 1;
+        transform: none;
+      }
+      .mention-hint {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+        padding: 4px 8px 6px;
+      }
+      .mention-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 7px 9px;
+        border-radius: var(--radius-sm);
+        font-size: 13.5px;
+        color: var(--fg-muted);
+      }
+      .mention-row.is-on {
+        background: var(--accent-soft);
+        color: var(--fg);
+      }
+      .m-ava {
+        width: 22px;
+        height: 22px;
+        flex: none;
+        border-radius: 6px;
+        display: grid;
+        place-items: center;
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--c, var(--accent));
+      }
+      .m-name {
+        flex: 1;
+      }
+      .m-type {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+      }
+      /* resolved mention token */
+      .mention {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.92em;
+        color: var(--accent-dim);
+        background: var(--accent-soft);
+        border-radius: 999px;
+        padding: 1px 9px 1px 7px;
+      }
+      .mention .m-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex: none;
+      }
+      #turnDemo[data-stage="1"] .demo-task,
+      #turnDemo[data-stage="2"] .demo-task,
+      #turnDemo[data-stage="3"] .demo-record,
+      #turnDemo[data-stage="4"] .demo-record {
+        opacity: 1;
+        transform: none;
+      }
+      .caret {
+        display: inline-block;
+        width: 2px;
+        height: 1.05em;
+        vertical-align: -2px;
+        margin-left: 1px;
+        background: var(--accent);
+        animation: caretBlink 1s step-end infinite;
+      }
+      .caret.hide {
+        display: none;
+      }
+      @keyframes caretBlink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+      /* record sub-views (stages 3–4) */
+      .rec-type {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--accent-dim);
+        background: var(--accent-soft);
+        border-radius: 999px;
+        padding: 2px 9px;
+        margin-bottom: 10px;
+      }
+      .rec-name {
+        font-family: var(--serif);
+        font-weight: 600;
+        font-size: 20px;
+        letter-spacing: -0.01em;
+        margin-bottom: 14px;
+      }
+      .rec-field {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13.5px;
+        padding: 7px 0;
+        border-top: 1px solid var(--border-soft);
+      }
+      .rec-field span {
+        color: var(--fg-dim);
+      }
+      .rec-field b {
+        color: var(--fg-muted);
+        font-weight: 600;
+      }
+      /* stage 3 → 4: the record morphs into a connection graph */
+      .demo-graph {
+        display: none;
+        position: relative;
+        width: 100%;
+        height: 198px;
+      }
+      #turnDemo[data-stage="4"] .rec-type,
+      #turnDemo[data-stage="4"] .rec-name,
+      #turnDemo[data-stage="4"] .demo-fields {
+        display: none;
+      }
+      #turnDemo[data-stage="4"] .demo-graph {
+        display: block;
+      }
+      .graph-edges {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+      .graph-edges line {
+        stroke: var(--accent);
+        stroke-width: 1.4;
+        stroke-dasharray: 4 4;
+        opacity: 0;
+      }
+      #turnDemo[data-stage="4"] .graph-edges line {
+        animation: edgeIn 0.55s ease both 0.1s;
+      }
+      @keyframes edgeIn {
+        from {
+          opacity: 0;
+          stroke-dashoffset: 18;
+        }
+        to {
+          opacity: 0.32;
+          stroke-dashoffset: 0;
+        }
+      }
+      .g-node {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        white-space: nowrap;
+        font-size: 12px;
+        color: var(--fg-muted);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 5px 11px 5px 9px;
+        box-shadow: var(--shadow-card);
+      }
+      .g-node .g-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--c, var(--accent));
+        flex: none;
+      }
+      .g-center {
+        font-family: var(--serif);
+        font-weight: 600;
+        font-size: 15px;
+        color: #fff;
+        background: var(--accent);
+        border-color: var(--accent);
+        padding: 9px 17px;
+        box-shadow: 0 7px 20px rgba(108, 92, 231, 0.4);
+        z-index: 2;
+      }
+      #turnDemo[data-stage="4"] .g-node {
+        animation: gNodeIn 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+      #turnDemo[data-stage="4"] .demo-graph .g-node:nth-of-type(2) {
+        animation-delay: 0.16s;
+      }
+      #turnDemo[data-stage="4"] .demo-graph .g-node:nth-of-type(3) {
+        animation-delay: 0.22s;
+      }
+      #turnDemo[data-stage="4"] .demo-graph .g-node:nth-of-type(4) {
+        animation-delay: 0.28s;
+      }
+      #turnDemo[data-stage="4"] .demo-graph .g-node:nth-of-type(5) {
+        animation-delay: 0.34s;
+      }
+      #turnDemo[data-stage="4"] .demo-graph .g-node:nth-of-type(6) {
+        animation-delay: 0.4s;
+      }
+      #turnDemo[data-stage="4"] .demo-graph .g-node:nth-of-type(7) {
+        animation-delay: 0.46s;
+      }
+      #turnDemo[data-stage="4"] .g-center {
+        animation: gCenterIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+      @keyframes gNodeIn {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.7);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+      @keyframes gCenterIn {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.6);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+      .demo-cap {
+        text-align: center;
+        font-family: var(--serif);
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--fg-muted);
+        margin: 20px auto 0;
+        max-width: 46ch;
+        min-height: 46px;
+        transition: opacity 0.3s ease;
+      }
+      .demo-cap b {
+        color: var(--fg);
+        font-weight: 600;
+      }
+      .demo-actions {
+        text-align: center;
+        margin-top: 16px;
+        min-height: 36px;
+      }
+      .demo-replay {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--fg-muted);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 7px 16px;
+        cursor: pointer;
+        opacity: 0;
+        transform: translateY(4px);
+        pointer-events: none;
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease,
+          color 0.15s ease,
+          border-color 0.15s ease,
+          background 0.15s ease;
+      }
+      .demo-replay.show {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+      }
+      .demo-replay:hover {
+        color: var(--accent-dim);
+        border-color: var(--accent-soft);
+        background: var(--accent-soft2);
+      }
+      .demo-replay svg {
+        width: 13px;
+        height: 13px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .demo-panel {
+          transition: none;
+        }
+        .caret {
+          animation: none;
+        }
+        #turnDemo .g-node,
+        #turnDemo .g-center {
+          animation: none;
+        }
+        #turnDemo .graph-edges line {
+          animation: none;
+          opacity: 0.32;
+        }
+      }
+
+      /* =========================================================
          Custom types
          ========================================================= */
       .types-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 14px;
-        max-width: 880px;
+        gap: 16px;
+        max-width: 1000px;
         margin: 0 auto;
       }
       @media (max-width: 720px) {
@@ -1974,6 +2396,172 @@
         </div>
       </section>
 
+      <!-- ===================== HOW IT WORKS / THE TURN ===================== -->
+      <section id="how">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <span class="eyebrow" style="margin-bottom: 16px"
+              >Simple by default</span
+            >
+            <h2>It's just a to-do list. Until you want more.</h2>
+            <p>
+              Most days, you'll just check things off. But the moment you link
+              a task to a name, Onyx quietly connects everything that mentions
+              it — no filing, no setup.
+            </p>
+          </div>
+
+          <div class="turn-demo reveal" style="--d: 80ms">
+            <div class="demo-dots" aria-hidden="true">
+              <span class="demo-dot"></span>
+              <span class="demo-dot"></span>
+              <span class="demo-dot"></span>
+              <span class="demo-dot"></span>
+            </div>
+
+            <div class="demo-card" id="turnDemo" data-stage="1">
+              <div class="demo-bar">
+                <span class="traffic r"></span>
+                <span class="traffic y"></span>
+                <span class="traffic g"></span>
+                <span class="demo-bar-ttl" id="demoTtl">Today</span>
+              </div>
+
+              <div class="demo-body">
+                <!-- Panel A: task / editor (stages 1–2) -->
+                <div class="demo-panel demo-task">
+                  <div class="demo-list">
+                    <!-- a simple, ordinary to-do -->
+                    <div class="task">
+                      <span class="check"></span>
+                      <span class="label">Draft the Q3 budget</span>
+                    </div>
+                    <!-- the one being typed, with @-mention autocomplete -->
+                    <div class="task typed-task">
+                      <span class="check"></span>
+                      <span class="label"
+                        ><span id="demoType"></span
+                        ><span class="caret" id="demoCaret"></span
+                      ></span>
+                    </div>
+
+                    <div
+                      class="mention-menu"
+                      id="mentionMenu"
+                      aria-hidden="true"
+                    >
+                      <div class="mention-hint">Link to…</div>
+                      <div class="mention-row is-on">
+                        <span class="m-ava" style="--c: #6c5ce7">A</span>
+                        <span class="m-name">Acme Co</span>
+                        <span class="m-type">Client</span>
+                      </div>
+                      <div class="mention-row">
+                        <span class="m-ava" style="--c: #cf8a3a">A</span>
+                        <span class="m-name">Acme — Website</span>
+                        <span class="m-type">Project</span>
+                      </div>
+                      <div class="mention-row">
+                        <span class="m-ava" style="--c: #2f9e9e">A</span>
+                        <span class="m-name">Acme — Brand</span>
+                        <span class="m-type">Project</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Panel B: record (stages 3–4) -->
+                <div class="demo-panel demo-record">
+                  <span class="rec-type">Client</span>
+                  <div class="rec-name">Acme Co</div>
+                  <div class="demo-fields">
+                    <div class="rec-field"><span>Status</span><b>Active</b></div>
+                    <div class="rec-field"><span>Owner</span><b>Priya</b></div>
+                  </div>
+                  <div class="demo-graph">
+                    <svg
+                      class="graph-edges"
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                      aria-hidden="true"
+                    >
+                      <line x1="50" y1="50" x2="18" y2="18" />
+                      <line x1="50" y1="50" x2="82" y2="18" />
+                      <line x1="50" y1="50" x2="12" y2="52" />
+                      <line x1="50" y1="50" x2="88" y2="52" />
+                      <line x1="50" y1="50" x2="30" y2="86" />
+                      <line x1="50" y1="50" x2="70" y2="86" />
+                    </svg>
+                    <div class="g-node g-center" style="left: 50%; top: 50%">
+                      Acme Co
+                    </div>
+                    <div
+                      class="g-node"
+                      style="left: 18%; top: 18%; --c: #6c5ce7"
+                    >
+                      <span class="g-dot"></span>Send proposal
+                    </div>
+                    <div
+                      class="g-node"
+                      style="left: 82%; top: 18%; --c: #4a78c8"
+                    >
+                      <span class="g-dot"></span>Invoice #1042
+                    </div>
+                    <div
+                      class="g-node"
+                      style="left: 12%; top: 52%; --c: #cf8a3a"
+                    >
+                      <span class="g-dot"></span>Kickoff notes
+                    </div>
+                    <div
+                      class="g-node"
+                      style="left: 88%; top: 52%; --c: #3f9d76"
+                    >
+                      <span class="g-dot"></span>Priya Shah
+                    </div>
+                    <div
+                      class="g-node"
+                      style="left: 30%; top: 86%; --c: #c264a8"
+                    >
+                      <span class="g-dot"></span>Acme — Website
+                    </div>
+                    <div
+                      class="g-node"
+                      style="left: 70%; top: 86%; --c: #2f9e9e"
+                    >
+                      <span class="g-dot"></span>Q3 roadmap call
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="demo-cap" id="demoCap">
+              Type <b>@</b> to link a task to a client, project, or person —
+              straight from the list.
+            </p>
+
+            <div class="demo-actions">
+              <button type="button" class="demo-replay" id="demoReplay">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="1 4 1 10 7 10" />
+                  <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                </svg>
+                Replay
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ===================== CUSTOM TYPES ===================== -->
       <section id="custom">
         <div class="wrap">
@@ -1983,9 +2571,9 @@
             </span>
             <h2>Your Space, your way.</h2>
             <p>
-              Clients and invoices for work, courses and assignments for
-              school, books and trips for personal — create a type for whatever
-              you keep track of, and Onyx treats each one as its own thing.
+              Clients for work, courses for school, books and trips for home —
+              make a type for whatever you keep track of. Each one gets its own
+              page, and your notes and todos link straight to it.
             </p>
           </div>
 
@@ -2606,6 +3194,153 @@
         els.forEach(function (e) {
           io.observe(e);
         });
+      })();
+
+      // ---------- "The turn" — morphing demo card ----------
+      (function () {
+        var demo = document.getElementById("turnDemo");
+        if (!demo) return;
+        var typeEl = document.getElementById("demoType");
+        var caret = document.getElementById("demoCaret");
+        var capEl = document.getElementById("demoCap");
+        var ttlEl = document.getElementById("demoTtl");
+        var dots = document.querySelectorAll(".demo-dot");
+
+        var TYPED = "Send proposal to @Acme";
+        var AT = TYPED.indexOf("@");
+        var RESOLVED =
+          'Send proposal to <span class="mention"><span class="m-dot"></span>Acme Co</span>';
+        var menu = document.getElementById("mentionMenu");
+        var caps = [
+          "Type <b>@</b> to link a task to a client, project, or person — straight from the list.",
+          "Picked. The task now points at <b>Acme Co</b>.",
+          "That link is a <b>Client</b> — a type you made, with its own page.",
+          "Open Acme and <b>everything connected to it</b> — tasks, notes, invoices, people — is already there.",
+        ];
+        var titles = ["Today", "Today", "Acme Co", "Acme Co"];
+
+        var replay = document.getElementById("demoReplay");
+
+        var reduce =
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        var timers = [];
+        function later(fn, ms) {
+          timers.push(setTimeout(fn, ms));
+        }
+        function clearAll() {
+          timers.forEach(clearTimeout);
+          timers = [];
+        }
+
+        function setStage(n) {
+          demo.setAttribute("data-stage", String(n));
+          dots.forEach(function (d, i) {
+            d.classList.toggle("on", i === n - 1);
+          });
+          if (capEl) capEl.innerHTML = caps[n - 1];
+          if (ttlEl) ttlEl.textContent = titles[n - 1];
+        }
+
+        function showReplay() {
+          if (replay) replay.classList.add("show");
+        }
+        function hideReplay() {
+          if (replay) replay.classList.remove("show");
+        }
+        function showMenu() {
+          if (menu) menu.classList.add("show");
+        }
+        function hideMenu() {
+          if (menu) menu.classList.remove("show");
+        }
+
+        // Reduced motion: show the fully-connected end state, offer replay-as-restart.
+        if (reduce) {
+          typeEl.innerHTML = RESOLVED;
+          if (caret) caret.classList.add("hide");
+          hideMenu();
+          setStage(4);
+          return;
+        }
+
+        function runOnce(done) {
+          hideReplay();
+          hideMenu();
+          setStage(1);
+          typeEl.textContent = "";
+          if (caret) caret.classList.remove("hide");
+          var i = 0;
+          (function type() {
+            if (i <= TYPED.length) {
+              typeEl.textContent = TYPED.slice(0, i);
+              if (i === AT + 1) showMenu(); // the "@" was just typed
+              i++;
+              later(type, 70);
+            } else {
+              later(stage2, 1500);
+            }
+          })();
+
+          function stage2() {
+            setStage(2);
+            hideMenu();
+            typeEl.innerHTML = RESOLVED;
+            if (caret) caret.classList.add("hide");
+            later(stage3, 2600);
+          }
+          function stage3() {
+            setStage(3);
+            later(stage4, 2800);
+          }
+          function stage4() {
+            setStage(4);
+            later(function () {
+              if (done) done();
+            }, 1200);
+          }
+        }
+
+        var playing = false;
+        function play() {
+          if (playing) return;
+          playing = true;
+          runOnce(function () {
+            playing = false;
+            showReplay();
+          });
+        }
+        function restart() {
+          clearAll();
+          playing = false;
+          play();
+        }
+
+        if (replay) replay.addEventListener("click", restart);
+
+        setStage(1);
+        typeEl.textContent = "";
+
+        if (!("IntersectionObserver" in window)) {
+          play();
+          return;
+        }
+        // Play once when it scrolls into view; replay on each re-entry.
+        var io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (en) {
+              if (en.isIntersecting) {
+                play();
+              } else {
+                clearAll();
+                playing = false;
+              }
+            });
+          },
+          { threshold: 0.35 },
+        );
+        io.observe(demo);
       })();
 
       // ---------- Live download wiring ----------
